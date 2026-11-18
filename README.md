@@ -39,6 +39,15 @@ How System Works:
 ### Scoring & Ranking Logic
 1. **Scoring Rule (Per Song):** Each song starts at `0.0` points. Matching a user's preferred `genre` adds `2.0` points, matching `mood` adds `1.5` points, and numerical features (`energy`, `valence`, `tempo_bpm`) add weighted points based on inverse distance (`1 - abs(song_val - target_val) / max_range`) so tracks closest to the user's target score highest.
 2. **Ranking Rule (Full Catalog):** After every song is scored, the recommender sorts the entire catalog in descending order by score (breaking ties using `popularity` and `title`) and returns the top $N$ tracks.
+
+### Finalized Algorithm Recipe & Expected Biases
+* **Data Flow:** `UserProfile` + `data/songs.csv` $\rightarrow$ Loop through every track in the catalog and compute a weighted compatibility score $\rightarrow$ Sort tracks in descending order by score $\rightarrow$ Return the Top $K$ recommendations with score breakdowns.
+* **Point-Weighting Recipe:**
+  * **Genre Match:** `+2.0` points if `song.genre` matches the user's preferred genre (`0.0` otherwise).
+  * **Mood Match:** `+1.0` point if `song.mood` matches the user's preferred mood (`0.0` otherwise).
+  * **Numerical Closeness (`energy`, `valence`, `tempo_bpm`, `danceability`, `acousticness`):** Up to `+1.0` point each based on inverse normalized distance (`1 - abs(song_val - target_val) / max_range`), rewarding songs closest to the user's target vibe rather than simply the highest values.
+* **Expected Algorithmic Biases:** Because `genre` carries the highest weight (`+2.0`), the system can create a **genre filter bubble**—over-favoring tracks in the user's preferred genre even when their mood or energy misses the mark, while burying strong cross-genre matches that fit the exact vibe.
+
 ---
 
 ## Getting Started

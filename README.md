@@ -98,6 +98,27 @@ Paste a sample of your recommender's output here as a text block so a reader can
 #   3. ...
 ```
 
+python -m src.main
+Loaded songs: 20
+
+User profile: {'genre': 'pop', 'mood': 'happy', 'energy': 0.8}
+Top recommendations:
+
+1. Sunrise City by Neon Echo (pop, happy) - Score: 3.98
+   Because: genre match (+2.0), mood match (+1.0), energy closeness (+0.98)
+
+2. Gym Hero by Max Pulse (pop, intense) - Score: 2.87
+   Because: genre match (+2.0), energy closeness (+0.87)
+
+3. Havana Breeze by Mateo Sol (latin, happy) - Score: 1.99
+   Because: mood match (+1.0), energy closeness (+0.99)
+
+4. Rooftop Lights by Indigo Parade (indie pop, happy) - Score: 1.96
+   Because: mood match (+1.0), energy closeness (+0.96)
+
+5. Lagos Sun by Kofi Blaze (afrobeats, happy) - Score: 1.95
+   Because: mood match (+1.0), energy closeness (+0.95)
+
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or demo video link here -->
 
 ---

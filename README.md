@@ -98,27 +98,19 @@ Paste a sample of your recommender's output here as a text block so a reader can
 #   3. ...
 ```
 
-python -m src.main
-Loaded songs: 20
-
-User profile: {'genre': 'pop', 'mood': 'happy', 'energy': 0.8}
-Top recommendations:
-
-1. Sunrise City by Neon Echo (pop, happy) - Score: 3.98
-   Because: genre match (+2.0), mood match (+1.0), energy closeness (+0.98)
-
-2. Gym Hero by Max Pulse (pop, intense) - Score: 2.87
-   Because: genre match (+2.0), energy closeness (+0.87)
-
-3. Havana Breeze by Mateo Sol (latin, happy) - Score: 1.99
-   Because: mood match (+1.0), energy closeness (+0.99)
-
-4. Rooftop Lights by Indigo Parade (indie pop, happy) - Score: 1.96
-   Because: mood match (+1.0), energy closeness (+0.96)
-
-5. Lagos Sun by Kofi Blaze (afrobeats, happy) - Score: 1.95
-   Because: mood match (+1.0), energy closeness (+0.95)
-
+PROFILE: 5. Weight Shift Experiment (Energy x2.0, Genre x0.5)
+Preferences: {'genre': 'pop', 'mood': 'happy', 'energy': 0.8, 'genre_weight': 0.5, 'energy_weight': 2.0}
+------------------------------------------------------------
+1. Sunrise City by Neon Echo (pop, happy) - Score: 3.46
+   Because: genre match (+0.5), mood match (+1.0), energy closeness (+1.96)
+2. Havana Breeze by Mateo Sol (latin, happy) - Score: 2.98
+   Because: mood match (+1.0), energy closeness (+1.98)
+3. Rooftop Lights by Indigo Parade (indie pop, happy) - Score: 2.92
+   Because: mood match (+1.0), energy closeness (+1.92)
+4. Lagos Sun by Kofi Blaze (afrobeats, happy) - Score: 2.90
+   Because: mood match (+1.0), energy closeness (+1.90)
+5. Gym Hero by Max Pulse (pop, intense) - Score: 2.24
+   Because: genre match (+0.5), energy closeness (+1.74)
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or demo video link here -->
 
 ---
@@ -130,6 +122,9 @@ Use this section to document the experiments you ran. For example:
 - What happened when you changed the weight on genre from 2.0 to 0.5
 - What happened when you added tempo or valence to the score
 - How did your system behave for different types of users
+
+* **Diverse & Adversarial User Profiles:** Tested four distinct listener profiles (`High-Energy Pop`, `Chill Lofi Study`, `Intense Rock Workout`, and an adversarial `High-Energy Sad Metal` profile). When given conflicting traits (`metal` + `sad` + `0.90 energy`), *Iron Collapse* (`metal`, `intense`, `0.96 energy`) still ranked #1 because `genre` (`+2.0`) and `energy` (`+0.94`) outweighed the `mood` mismatch, whereas *Autumn Nocturne* (`classical`, `sad`, `0.22 energy`) only earned `+1.0` for mood.
+* **Weight Shift Experiment (Genre `2.0 -> 0.5`, Energy `1.0 -> 2.0`):** Lowering the `genre` bonus and doubling `energy` closeness broke the pop filter bubble. Cross-genre tracks like *Havana Breeze* (`latin`, `happy`, `0.81 energy`) and *Lagos Sun* (`afrobeats`, `happy`, `0.85 energy`) jumped ahead of *Gym Hero* (`pop`, `intense`, `0.93 energy`), producing recommendations that matched the user's upbeat vibe far better than strict genre matching.
 
 ---
 
@@ -145,6 +140,10 @@ Examples:
 
 You will go deeper on this in your model card.
 
+* **Tiny Catalog Size:** The recommender only works on a small 20-song CSV catalog (`data/songs.csv`), which limits variety and forces the system to fill top-$K$ slots with partial matches when a listener requests a niche genre or mood.
+* **No Understanding of Lyrics or Language:** Because the algorithm relies solely on numeric audio scores (`energy`, `tempo_bpm`, `valence`) and single-word tags, it cannot read lyrics, detect vocal language, or recognize sensitive themes and cultural context.
+* **Over-Favoring One Genre or Mood (Filter Bubble):** Awarding `+2.0` points for an exact genre match causes the system to over-favor tracks from the same genre even when the mood clashes—such as ranking an `intense` pop song above a `happy` Latin or Afrobeats track for a listener seeking happy music.
+
 ---
 
 ## Reflection
@@ -158,5 +157,7 @@ Write 1 to 2 paragraphs here about what you learned:
 - about how recommenders turn data into predictions
 - about where bias or unfairness could show up in systems like this
 
+Building and stress-testing this simulation showed me how recommender systems turn raw song metadata into ranked predictions through explicit mathematical rules. By converting qualitative musical traits like `genre`, `mood`, and `energy` into numerical points and distance scores, the algorithm transforms subjective listening preferences into a repeatable ranking formula—showing that predictions are simply the direct result of the features and weights an engineer chooses to prioritize.
 
+Testing diverse and adversarial listener profiles also revealed how easily bias and unfairness can emerge in systems like this. When `genre` carries a high weight (`+2.0`), the recommender creates a filter bubble that rewards exact label matches even when the mood clashes, while underrepresenting niche genres and ignoring lyrics or cultural context. Small design choices—such as feature weights or catalog representation—directly shape which artists get surfaced and which listeners get overlooked.
 

@@ -27,8 +27,18 @@ Some prompts to answer:
 - How does your `Recommender` compute a score for each song
 - How do you choose which songs to recommend
 
-You can include a simple diagram or bullet list if helpful.
+You can include a simple diagram or bullet list if helpful. 
 
+How System Works:
+ Real-world platforms like Spotify and TikTok predict what listeners want by combining **collaborative filtering** (finding patterns across millions of users' likes, skips, and playlists) with **content-based filtering** (matching audio characteristics directly to a user's listening history). Because this simulation runs offline without live behavioral logs from millions of users, it uses a **content-based weighted scoring model**. My version prioritizes categorical vibe matches (`genre` and `mood`) first, then refines recommendations using numerical closeness on `energy`, `valence`, and `tempo_bpm`.
+
+ ## Data Model & Features
+* **`Song` Features:** `id`, `title`, `artist`, `genre`, `mood`, `energy` (0.0–1.0), `valence` (0.0–1.0), `tempo_bpm`, and `popularity`.
+* **`UserProfile` Features:** `preferred_genres`, `preferred_moods`, `target_energy`, `target_valence`, `target_tempo`, and configurable feature weights (`genre_weight`, `mood_weight`, `energy_weight`, `valence_weight`, `tempo_weight`).
+
+### Scoring & Ranking Logic
+1. **Scoring Rule (Per Song):** Each song starts at `0.0` points. Matching a user's preferred `genre` adds `2.0` points, matching `mood` adds `1.5` points, and numerical features (`energy`, `valence`, `tempo_bpm`) add weighted points based on inverse distance (`1 - abs(song_val - target_val) / max_range`) so tracks closest to the user's target score highest.
+2. **Ranking Rule (Full Catalog):** After every song is scored, the recommender sorts the entire catalog in descending order by score (breaking ties using `popularity` and `title`) and returns the top $N$ tracks.
 ---
 
 ## Getting Started
